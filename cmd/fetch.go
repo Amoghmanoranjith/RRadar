@@ -6,9 +6,9 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"net/http"
 	"rradar/db"
 	"rradar/model"
+	"rradar/http"
 	"slices"
 	"time"
 )
@@ -19,7 +19,7 @@ func Process(repo *db.Repository,
 	url := "https://www.reddit.com/r/" + subreddit + "/new.rss"
 	// init db
 	fmt.Println("Fetching:", url)
-	resp, err := http.Get(url)
+	resp, err := http.Client.Get(url)
 	if err != nil {
 		fmt.Println("Request failed:", err)
 		return
