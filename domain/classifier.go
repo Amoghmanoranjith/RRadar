@@ -6,5 +6,5 @@ import (
 )
 
 type Classifier interface{
-	Classify(entry modelXML.Entry)(entryRelevance modelLLM.Entry)
+	Classify(entry modelXML.Entry)(entryRelevance modelLLM.Entry, error error)
 }
