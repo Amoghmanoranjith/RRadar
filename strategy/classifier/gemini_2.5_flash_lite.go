@@ -13,17 +13,17 @@ import (
 	modelXML "rradar/model/xml"
 )
 
-type Gemini25Flash struct {
+type Gemini25FlashLite struct {
 	apiKey string
 }
 
-func NewGemini25Flash(apiKey string) *Gemini25Flash {
+func NewGemini25FlashLite(apiKey string) *Gemini25Flash {
     return &Gemini25Flash{
         apiKey: apiKey,
     }
 }
 
-func (g Gemini25Flash) Classify(entry modelXML.Entry) (modelLLM.Entry, error) {
+func (g Gemini25FlashLite) Classify(entry modelXML.Entry) (modelLLM.Entry, error) {
 
 	prompt := modelLLM.BuildPrompt(entry.Title, entry.Content)
 
@@ -46,7 +46,7 @@ func (g Gemini25Flash) Classify(entry modelXML.Entry) (modelLLM.Entry, error) {
 
 	req, err := http.NewRequest(
 		http.MethodPost,
-		"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
+		"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent",
 		bytes.NewReader(data),
 	)
 	if err != nil {
