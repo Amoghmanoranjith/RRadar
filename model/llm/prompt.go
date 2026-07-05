@@ -3,9 +3,11 @@ package llm
 import "strings"
 
 var Prompt = `
-You classify Reddit freelance posts.
+You classify Reddit posts.
 
-Input:
+Interesting = people hiring backend dev.
+
+Input
 
 Title:
 {{TITLE}}
@@ -13,64 +15,65 @@ Title:
 Content:
 {{CONTENT}}
 
-Interesting if backend is primary.
-
-Accept:
+Good:
 - backend
-- APIs
+- API
 - Go Java Rust Python C# Node
-- microservices
-- distributed systems
-- databases
+- microservice
+- distributed
 - SQL NoSQL
-- caching
 - Redis
 - Kafka RabbitMQ
 - Docker
 - Kubernetes
 - AWS GCP Azure
-- CI/CD
 - auth
-- payments
+- payment
 - performance
 - scaling
-- bug fixes
-- refactoring
-- migrations
-- integrations
+- bug fix
+- refactor
+- migration
+- integration
 
-Reject:
-- frontend-heavy
-- React
-- Next.js
-- Angular
-- Vue
+Bad:
+- frontend
+- React Next Angular Vue
 - HTML CSS
-- WordPress
-- Shopify
-- Wix
-- Bubble
-- Webflow
-- mobile-only
-- UI/UX
+- WordPress Shopify Wix Bubble Webflow
+- mobile only
+- UI UX
 - SEO
 - marketing
 - writing
-- video editing
-- crypto promotion
+- video
+- crypto
 
-If backend > frontend => interesting.
-If frontend >= backend => not interesting.
+Bad:
+- for hire
+- open to work
+- available
+- resume
+- portfolio
+- agency ad
+- looking for client
+- looking for job
+- selling own service
 
-Return only:
+Rule:
+- hiring backend -> interesting
+- backend > frontend -> interesting
+- frontend >= backend -> not interesting
+- author want job -> not interesting
+- author hire people -> interesting
 
-{"interesting":true,"confidence":0.93,"reason":"short reason"}
+Return ONLY:
 
-Rules:
-- confidence between 0 and 1.
-- reason under 40 words.
-- NO markdown.
-- NO explanations outside the JSON.
+{"interesting":true,"confidence":0.95,"reason":"<40 words>"}
+
+No markdown.
+No extra text.
+Only JSON.
 `
 
 
