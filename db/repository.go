@@ -26,8 +26,8 @@ func New(path string) (*Repository, error) {
 
 	_, err = db.Exec(`
 		CREATE TABLE IF NOT EXISTS post (
-			label TEXT PRIMARY KEY,
-			user_name TEXT,
+			subreddit TEXT PRIMARY KEY,
+			author TEXT,
 			published DATETIME
 		)
 	`)
@@ -54,28 +54,28 @@ func (r *Repository) Drop() error {
 // **********************************
 // repo ops
 
-func (r *Repository) GetPost(label string) (published time.Time, userName string, err error) {
+func (r *Repository) GetPost(subreddit string) (published time.Time, author string, err error) {
 	err = r.db.QueryRow(`
-		SELECT published, user_name
+		SELECT published, author
 		FROM post
-		WHERE label = ?
-	`, label).Scan(&published, &userName)
+		WHERE subreddit = ?
+	`, subreddit).Scan(&published, &author)
 	return
 }
 
 func (r *Repository) UpdatePost(
-	label string,
-	userName string,
+	subreddit string,
+	author string,
 	published time.Time,
 ) error {
 	_, err := r.db.Exec(`
 		INSERT OR REPLACE INTO post (
-			label,
-			user_name,
+			subreddit,
+			author,
 			published
 		)
 		VALUES (?, ?, ?)
-	`, label, userName, published)
+	`, subreddit, author, published)
 
 	return err
 }
