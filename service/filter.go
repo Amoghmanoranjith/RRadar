@@ -48,14 +48,10 @@ func Filter(repo *db.Repository, feed modelXML.Feed) (filteredFeed modelXML.Feed
 		return modelXML.Feed{}
 	}
 	// store in an array of data
-	for _, entry := range filteredEntries {
 		fmt.Println("================================")
-		fmt.Println("Title    :", entry.Title)
-		fmt.Println("Author   :", entry.Author)
-		fmt.Println("Published:", entry.Published)
-		fmt.Println("Link     :", entry.Link)
+		fmt.Println("Filtering complete")
+		fmt.Println("================================")
 
-	}
 	feed.Entries = filteredEntries
 	return feed
 }
