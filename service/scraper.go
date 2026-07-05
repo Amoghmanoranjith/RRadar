@@ -11,7 +11,8 @@ import (
 func Scrape(
 	subreddit string,
 ) modelXML.Feed {
-	url := "https://www.reddit.com/r/" + subreddit + "/new.rss"
+	// url := "https://www.reddit.com/r/" + subreddit + "/new.rss"
+	url := "https://www.reddit.com/r/freelance_forhire/comments/1ukoi7e/hiring_advance_website_developer.rss"
 
 	fmt.Println("Fetching:", url)
 	resp, err := http.Client.Get(url)
@@ -23,7 +24,7 @@ func Scrape(
 	fmt.Println("Status:", resp.Status)
 
 	body, err := io.ReadAll(resp.Body)
-	resp.Body.Close()
+	resp.Body.Close()	
 	if err != nil {
 		fmt.Println("Read failed:", err)
 		return modelXML.Feed{}
