@@ -5,5 +5,5 @@ import (
 )
 
 type Notifier interface{
-	Notify(entry modelLLM.Entry)
+	Notify(entry modelLLM.Entry) (error error)
 }
