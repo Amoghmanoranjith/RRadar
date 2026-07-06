@@ -2,15 +2,12 @@ package classifier
 
 import (
 	"bytes"
-	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"net/http"
+	adapter "rradar/adapter/classifier"
 	clientHTTP "rradar/http"
-	modelLLM "rradar/model/llm"
-	modelGemini "rradar/model/llm/gemini"
-	modelXML "rradar/model/xml"
+	"rradar/model"
 )
 
 type Gemini25FlashLite struct {
@@ -18,30 +15,17 @@ type Gemini25FlashLite struct {
 }
 
 func NewGemini25FlashLite(apiKey string) *Gemini25Flash {
-    return &Gemini25Flash{
-        apiKey: apiKey,
-    }
+	return &Gemini25Flash{
+		apiKey: apiKey,
+	}
 }
 
-func (g Gemini25FlashLite) Classify(entry modelXML.Entry) (modelLLM.Entry, error) {
-
-	prompt := modelLLM.BuildPrompt(entry.Title, entry.Content)
-
-	body := modelGemini.GenerateContentRequest{
-		Contents: []modelGemini.Content{
-			{
-				Parts: []modelGemini.Part{
-					{
-						Text: prompt,
-					},
-				},
-			},
-		},
-	}
-
-	data, err := json.Marshal(body)
+func (g Gemini25FlashLite) Classify(post model.Post) (model.ClassifiedPost, error) {
+	// this can use the same adapter for now
+	a := &adapter.Gemini25FlashAdapter{}
+	data, err := a.EncodeRequest(post)
 	if err != nil {
-		return modelLLM.Entry{}, err
+		return model.ClassifiedPost{}, err
 	}
 
 	req, err := http.NewRequest(
@@ -50,7 +34,7 @@ func (g Gemini25FlashLite) Classify(entry modelXML.Entry) (modelLLM.Entry, error
 		bytes.NewReader(data),
 	)
 	if err != nil {
-		return modelLLM.Entry{}, err
+		return model.ClassifiedPost{}, err
 	}
 
 	req.Header.Set("Content-Type", "application/json")
@@ -58,41 +42,17 @@ func (g Gemini25FlashLite) Classify(entry modelXML.Entry) (modelLLM.Entry, error
 
 	resp, err := clientHTTP.Client.Do(req)
 	if err != nil {
-		return modelLLM.Entry{}, err
+		return model.ClassifiedPost{}, err
 	}
 	defer resp.Body.Close()
-
+	// read the data in response body, convert it to []byte
+	data, err = io.ReadAll(resp.Body)
+	if err != nil {
+		return model.ClassifiedPost{}, err
+	}
 	if resp.StatusCode != http.StatusOK {
 		b, _ := io.ReadAll(resp.Body)
-		return modelLLM.Entry{}, fmt.Errorf("gemini returned %d: %s", resp.StatusCode, b)
+		return model.ClassifiedPost{}, fmt.Errorf("gemini returned %d: %s", resp.StatusCode, b)
 	}
-
-	var result modelGemini.GenerateContentResponse
-
-	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
-		return modelLLM.Entry{}, err
-	}
-
-	if len(result.Candidates) == 0 ||
-		len(result.Candidates[0].Content.Parts) == 0 {
-
-		return modelLLM.Entry{}, errors.New("gemini returned no candidates")
-	}
-
-	text := result.Candidates[0].Content.Parts[0].Text
-
-	// Parse the LLM's response into your Entry.
-	// Assuming BuildPrompt asks Gemini to return JSON.
-	var classified modelLLM.Entry
-	if err := json.Unmarshal([]byte(text), &classified); err != nil {
-		return modelLLM.Entry{}, err
-	}
-	// populate with remaining 
-	classified.Author = entry.Author
-	classified.Content = entry.Content
-	classified.Link = entry.Link
-	classified.Title = entry.Title
-	classified.Published = entry.Published
-
-	return classified, nil
+	return a.DecodeResponse(data, post)
 }
