@@ -5,25 +5,26 @@ import (
 	"errors"
 	"fmt"
 	"rradar/db"
-	modelXML "rradar/model/xml"
+	"rradar/model"
 	"slices"
 	"time"
 )
 
-func Filter(repo *db.Repository, feed modelXML.Feed) (filteredFeed modelXML.Feed){
+// we assume all the posts belong to the same subreddit
+func Filter(repo *db.Repository, posts []model.Post) ([]model.Post, error) {
 
 	// we filter
 	// find the last published post stored in db
-	published, _, err := repo.GetPost(feed.Subreddit)
+	published, _, err := repo.GetPost(posts[0].Subreddit)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			published = time.Time{} // id want this to be equal to oldest so that i can analyse all the posts once
 		} else {
-			panic(err) 
+			return nil, err
 		}
 	}
 	// first sort the entries in latest published at top
-	slices.SortFunc(feed.Entries, func(a, b modelXML.Entry) int {
+	slices.SortFunc(posts, func(a, b model.Post) int {
 		if a.Published.After(b.Published) {
 			return -1
 		}
@@ -34,25 +35,18 @@ func Filter(repo *db.Repository, feed modelXML.Feed) (filteredFeed modelXML.Feed
 	})
 
 	// stroe the entries in a separate array
-	var filteredEntries []modelXML.Entry
+	var filteredPosts []model.Post
 
 	// then find the first entry that occured after published
-	for _, entry := range feed.Entries {
+	for _, entry := range posts {
 		if entry.Published.After(published) {
-			filteredEntries = append(filteredEntries, entry)
+			filteredPosts = append(filteredPosts, entry)
 		}
 	}
 	// we sys out these entries the others are not required
-	if len(filteredEntries) == 0 {
-		fmt.Println("No new entries")
-		return modelXML.Feed{}
-	}
-	// store in an array of data
-		fmt.Println("================================")
-		fmt.Println("Filtering complete")
-		fmt.Println("================================")
+	fmt.Println("================================")
+	fmt.Println("Filtering complete")
+	fmt.Println("================================")
 
-	feed.Entries = filteredEntries
-	return feed
+	return filteredPosts, nil
 }
-

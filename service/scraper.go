@@ -1,24 +1,22 @@
 package service
 
 import (
-	"encoding/xml"
 	"fmt"
 	"io"
 	"rradar/http"
-	modelXML "rradar/model/xml"
 )
 
 func Scrape(
 	subreddit string,
-) modelXML.Feed {
+) []byte {
 	// url := "https://www.reddit.com/r/" + subreddit + "/new.rss"
 	url := "https://www.reddit.com/r/freelance_forhire/comments/1ukoi7e/hiring_advance_website_developer.rss"
 
 	fmt.Println("Fetching:", url)
 	resp, err := http.Client.Get(url)
 	if err != nil {
-		fmt.Println("Request failed:", err)
-		return modelXML.Feed{}
+		fmt.Println("Scrape failed:", err)
+		return []byte{}
 	}
 
 	fmt.Println("Status:", resp.Status)
@@ -27,17 +25,8 @@ func Scrape(
 	resp.Body.Close()	
 	if err != nil {
 		fmt.Println("Read failed:", err)
-		return modelXML.Feed{}
+		return []byte{}
 	}
 
-	var feedXML modelXML.Feed_xml
-	if err := xml.Unmarshal(body, &feedXML); err != nil {
-		fmt.Println("XML parse failed:", err)
-		return modelXML.Feed{}
-	}
-
-	// Convert XML model -> domain model
-	feed := feedXML.ToFeed()
-
-	return feed
+	return body
 }
