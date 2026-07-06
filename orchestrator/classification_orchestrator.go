@@ -18,7 +18,7 @@ func NewClassificationOrchestrator(c []domain.Classifier) *ClassificationOrchest
     }
 }
 
-func (m *ClassificationOrchestrator) Process(posts []model.Post) ([]model.ClassifiedPost, error) {
+func (m *ClassificationOrchestrator) Classify(posts []model.Post) ([]model.ClassifiedPost, error) {
 
 	classifiedPosts := []model.ClassifiedPost{}
 
