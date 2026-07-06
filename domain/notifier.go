@@ -1,9 +1,7 @@
 package domain
 
-import (
-	modelLLM "rradar/model/llm"
-)
+import "rradar/model"
 
-type Notifier interface{
-	Notify(entry modelLLM.Entry) (error error)
+type Notifier interface {
+	Notify(entry model.ClassifiedPost) (error error)
 }
