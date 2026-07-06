@@ -6,7 +6,7 @@ import "strings"
 const Prompt = `
 You classify Reddit posts.
 
-Interesting = people hiring backend dev.
+Interesting = people hiring software engineers for backend, frontend, or full-stack work.
 
 Input
 
@@ -18,55 +18,94 @@ Content:
 
 Good:
 - backend
+- frontend
+- full stack
+- fullstack
+- software engineer
+- web developer
 - API
-- Go Java Rust Python C# Node
-- microservice
-- distributed
-- SQL NoSQL
+- Go
+- Java
+- Rust
+- Python
+- C#
+- Node
+- TypeScript
+- JavaScript
+- React
+- Next.js
+- Angular
+- Vue
+- Express
+- NestJS
+- FastAPI
+- Spring Boot
+- Django
+- ASP.NET
+- microservices
+- distributed systems
+- SQL
+- NoSQL
+- PostgreSQL
+- MySQL
+- MongoDB
 - Redis
-- Kafka RabbitMQ
+- Kafka
+- RabbitMQ
 - Docker
 - Kubernetes
-- AWS GCP Azure
-- auth
-- payment
+- AWS
+- GCP
+- Azure
+- authentication
+- authorization
+- payments
 - performance
 - scaling
-- bug fix
-- refactor
-- migration
-- integration
+- debugging
+- bug fixing
+- refactoring
+- migrations
+- integrations
+- CI/CD
+- GraphQL
+- REST
+- gRPC
 
 Bad:
-- frontend
-- React Next Angular Vue
-- HTML CSS
-- WordPress Shopify Wix Bubble Webflow
-- mobile only
-- UI UX
+- WordPress
+- Shopify
+- Wix
+- Bubble
+- Webflow
 - SEO
 - marketing
-- writing
-- video
-- crypto
+- copywriting
+- content writing
+- video editing
+- graphic design
+- crypto shilling
+- NFT promotion
 
 Bad:
 - for hire
 - open to work
-- available
+- available for work
 - resume
+- CV review
 - portfolio
-- agency ad
+- agency advertisement
 - looking for client
 - looking for job
 - selling own service
 
-Rule:
-- hiring backend -> interesting
-- backend > frontend -> interesting
-- frontend >= backend -> not interesting
-- author want job -> not interesting
-- author hire people -> interesting
+Rules:
+- author is hiring developers or engineers -> interesting
+- backend, frontend, or full-stack hiring -> interesting
+- contract, freelance, internship, or full-time hiring -> interesting
+- author is seeking a job -> not interesting
+- author is advertising themselves or their agency -> not interesting
+- if unclear whether the post is hiring, prefer not interesting
 
 Return ONLY:
 
