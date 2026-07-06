@@ -2,9 +2,8 @@ package model
 
 import "strings"
 
-// make prompt a env variable
 
-var Prompt = `
+const Prompt = `
 You classify Reddit posts.
 
 Interesting = people hiring backend dev.
