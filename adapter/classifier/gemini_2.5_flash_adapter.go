@@ -57,7 +57,7 @@ type classification struct {
 	Confidence  float32 `json:"confidence"`
 	Reason      string  `json:"reason"`
 }
-func (adapter *Gemini25FlashAdapter) ParseResponse(data []byte, post model.Post) (model.ClassifiedPost, error) {
+func (adapter *Gemini25FlashAdapter) DecodeResponse(data []byte, post model.Post) (model.ClassifiedPost, error) {
 var resp geminiResponse
 
 	if err := json.Unmarshal(data, &resp); err != nil {
