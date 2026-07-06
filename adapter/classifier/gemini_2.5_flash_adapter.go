@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"rradar/model"
-	modelLLM "rradar/model/llm"
 )
 
 type Gemini25FlashAdapter struct{}
@@ -25,7 +24,7 @@ type geminiPart struct {
 
 
 func (adapter *Gemini25FlashAdapter) EncodeRequest(post model.Post) ([]byte, error) {
-	prompt := modelLLM.BuildPrompt(post.Title, post.Content)
+	prompt :=  model.BuildPrompt(post.Title, post.Content)
 	req := geminiRequest{
 		Contents: []geminiContent{
 			{
