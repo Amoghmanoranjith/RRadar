@@ -1,11 +1,12 @@
-package xml
+package model
 
 import "time"
 
-type Entry struct {
+type Post struct {
 	Title     string
 	Content   string
 	Link      string
 	Author    string
 	Published time.Time
+	Subreddit string
 }
