@@ -9,8 +9,7 @@ import (
 func Scrape(
 	subreddit string,
 ) []byte {
-	// url := "https://www.reddit.com/r/" + subreddit + "/new.rss"
-	url := "https://www.reddit.com/r/freelance_forhire/comments/1ukoi7e/hiring_advance_website_developer.rss"
+	url := "https://www.reddit.com/r/" + subreddit + "/new.rss"
 
 	fmt.Println("Fetching:", url)
 	resp, err := http.Client.Get(url)
