@@ -1,0 +1,35 @@
+# Include any custom binaries you build (e.g., if you output to a bin/ directory)
+/bin/
+
+# Compiled Object files, Object directories, Shared libraries
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binaries and artifacts
+*.test
+*.out
+*.coverprofile
+profile.cov
+
+# Dependency directories
+# Only uncomment vendor/ if you are strictly required to commit your dependencies.
+# Otherwise, Go modules handle this automatically via go.mod and go.sum.
+# vendor/
+
+# Go workspace file
+go.work
+go.work.sum
+
+# Environment configuration files (contains sensitive keys/passwords)
+.env
+.env.*
+!.env.example
+
+# Common IDEs and text editors
+.vscode/
+
+# Other
+example
