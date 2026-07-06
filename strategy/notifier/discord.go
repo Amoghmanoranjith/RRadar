@@ -2,20 +2,17 @@ package notifier
 
 import (
 	"bytes"
-	"encoding/json"
-	"fmt"
 	"net/http"
+	adapter "rradar/adapter/notifier"
 	clientHTTP "rradar/http"
-	modelLLM "rradar/model/llm"
+	"rradar/model"
 )
 
 type Discord struct {
 	webhookURL string
 }
 
-type Payload struct {
-	Content string `json:"content"`
-}
+
 
 func NewDiscord(webhookURL string) *Discord {
 	return &Discord{
@@ -25,25 +22,15 @@ func NewDiscord(webhookURL string) *Discord {
 
 // discord has a rate limiting of 5 per 2 seconds
 
-func (d Discord) Notify(entry modelLLM.Entry) (error error) {
+// this should get classified post
+// get the bytes for this built using an adapter
+// make the request and return error if any
+
+func (d Discord) Notify(classifiedPost model.ClassifiedPost) (error error) {
 	// this gon notify the webhook
 	// structure the message
-	message := fmt.Sprintf(
-		"## 📰 %s\n\n"+
-			"**Reason:** %s\n"+
-			"**Published:** <t:%d:F>\n"+
-			"**Link:** %s",
-		entry.Title,
-		entry.Reason,
-		entry.Published.Unix(),
-		entry.Link,
-	)
-
-	payload := Payload{
-		Content: message,
-	}
-	data, err := json.Marshal(payload)
-	fmt.Println(string(data))
+	a := &adapter.DiscordAdapter{}
+	data, err := a.EncodeRequest(classifiedPost)
 	if err != nil {
 		return err
 	}
