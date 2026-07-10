@@ -140,7 +140,7 @@ Rules:
 Return ONLY:
 {"interesting":true,"confidence":0.95,"reason":"<40 words>"}
 
-No markdown.
+No markdown returns!.
 No extra text.
 Only JSON.
 `
