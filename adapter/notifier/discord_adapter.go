@@ -3,6 +3,7 @@ package notifier
 import (
 	"encoding/json"
 	"fmt"
+	"log/slog"
 	"rradar/model"
 )
 
@@ -27,7 +28,18 @@ func (adapter *DiscordAdapter) EncodeRequest(classifiedPost model.ClassifiedPost
 	payload := Payload{
 		Content: message,
 	}
-	return json.Marshal(payload)
+	bytes, err := json.Marshal(payload)
+	if err != nil{
+		slog.Error(
+			"failed to marshal discord request",
+			"component", "DiscordAdapter",
+			"operation", "EncodeRequest",
+			"cause", "json.Marshal",
+			"error", err,
+		)
+		return nil, err
+	}
+	return bytes, nil
 }
 
 // this takes []byte returns error if any
