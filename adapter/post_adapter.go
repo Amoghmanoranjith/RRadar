@@ -2,6 +2,7 @@ package adapter
 
 import (
 	"encoding/xml"
+	"log/slog"
 	"rradar/model"
 	"time"
 )
@@ -41,6 +42,12 @@ func AdaptXMLToPost(data []byte) ([]model.Post, error) {
 	var feed Feed
 
 	if err := xml.Unmarshal(data, &feed); err != nil {
+		slog.Error(
+			"failed to unmarshal xml",
+			"operation", "EncodeRequest",
+			"cause", "json.Unmarshal",
+			"error", err,
+		)
 		return nil, err
 	}
 
