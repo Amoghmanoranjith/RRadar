@@ -53,6 +53,7 @@ func (g Gemini25Flash) Classify(post model.Post) (model.ClassifiedPost, error) {
 			"component", "Gemini25Flash",
 			"operation", "Classify",
 			"cause", "clientHTTP.Client.Do",
+			"link", post.Link,
 			"error", err,
 		)
 		return model.ClassifiedPost{}, err

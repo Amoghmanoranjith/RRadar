@@ -54,6 +54,7 @@ func (mistral Mistral) Classify(post model.Post) (model.ClassifiedPost, error) {
 			"component", "Mistral",
 			"operation", "Classify",
 			"cause", "clientHTTP.Client.Do",
+			"link", post.Link,
 			"error", err,
 		)
 		return model.ClassifiedPost{}, err
