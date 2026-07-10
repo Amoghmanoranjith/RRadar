@@ -2,7 +2,7 @@ package classifier
 
 import (
 	"encoding/json"
-	"fmt"
+	"log/slog"
 	"rradar/model"
 )
 
@@ -37,7 +37,18 @@ func (adapter *Gemini25FlashAdapter) EncodeRequest(post model.Post) ([]byte, err
 		},
 	}
 
-	return json.Marshal(req)
+	bytes, err := json.Marshal(req)
+	if err != nil {
+		slog.Error(
+			"failed to marshal gemini flash request",
+			"component", "Gemini25FlashAdapter",
+			"operation", "EncodeRequest",
+			"cause", "json.Marshal",
+			"error", err,
+		)
+		return nil, err
+	}
+	return bytes, err
 }
 
 // convert response from gemini 2.5 flash to classifiedPost type*************************************
@@ -60,12 +71,19 @@ func (adapter *Gemini25FlashAdapter) DecodeResponse(data []byte, post model.Post
 var resp geminiResponse
 
 	if err := json.Unmarshal(data, &resp); err != nil {
+		slog.Error(
+			"failed to unmarshal mistral response",
+			"component", "MistralAdapter",
+			"operation", "DecodeResponse",
+			"cause", "json.Unmarshal",
+			"error", err,
+		)
 		return model.ClassifiedPost{}, err
 	}
 
 	if len(resp.Candidates) == 0 ||
 		len(resp.Candidates[0].Content.Parts) == 0 {
-		return model.ClassifiedPost{}, fmt.Errorf("empty Gemini response")
+		return model.ClassifiedPost{}, nil
 	}
 
 	var c classification
@@ -74,6 +92,13 @@ var resp geminiResponse
 		[]byte(resp.Candidates[0].Content.Parts[0].Text),
 		&c,
 	); err != nil {
+		slog.Error(
+			"failed to unmarshal mistral response",
+			"component", "MistralAdapter",
+			"operation", "DecodeResponse",
+			"cause", "json.Unmarshal",
+			"error", err,
+		)
 		return model.ClassifiedPost{}, err
 	}
 
