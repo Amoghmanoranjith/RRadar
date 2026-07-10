@@ -2,8 +2,10 @@ package db
 
 import (
 	"database/sql"
-	_ "modernc.org/sqlite"
+	"log/slog"
 	"time"
+
+	_ "modernc.org/sqlite"
 )
 
 type Repository struct {
@@ -13,6 +15,12 @@ type Repository struct {
 func New(path string) (*Repository, error) {
 	db, err := sql.Open("sqlite", path)
 	if err != nil {
+		slog.Error(
+			"failed to create a db connection",
+			"operation", "New",
+			"cause", "sql.Open",
+			"error", err,
+		)
 		return nil, err
 	}
 
@@ -21,6 +29,12 @@ func New(path string) (*Repository, error) {
 
 	if err := db.Ping(); err != nil {
 		db.Close()
+		slog.Error(
+			"failed to establish connection with db",
+			"operation", "New",
+			"cause", "db.Ping",
+			"error", err,
+		)
 		return nil, err
 	}
 
@@ -33,12 +47,19 @@ func New(path string) (*Repository, error) {
 	`)
 	if err != nil {
 		db.Close()
+		slog.Error(
+			"failed to execute query",
+			"operation", "New",
+			"cause", "db.Exec",
+			"error", err,
+		)
 		return nil, err
 	}
-
-	return &Repository{
+	r := &Repository{
 		db: db,
-	}, nil
+	}
+	// r.Drop() // ************************************8testing rn we need empty dbs
+	return r, nil
 }
 
 func (r *Repository) Close() error {
@@ -60,6 +81,15 @@ func (r *Repository) GetPost(subreddit string) (published time.Time, author stri
 		FROM post
 		WHERE subreddit = ?
 	`, subreddit).Scan(&published, &author)
+	if err != nil {
+		slog.Error(
+			"failed to get post from db",
+			"operation", "GetPost",
+			"cause", "r.db.QueryRow",
+			"error", err,
+		)
+		return time.Time{}, "", err
+	}
 	return
 }
 
@@ -76,6 +106,13 @@ func (r *Repository) UpdatePost(
 		)
 		VALUES (?, ?, ?)
 	`, subreddit, author, published)
-
+	if err != nil {
+		slog.Error(
+			"failed to update post in db",
+			"operation", "UpdatePost",
+			"cause", "r.db.Exec",
+			"error", err,
+		)
+	}
 	return err
 }
