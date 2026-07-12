@@ -17,4 +17,5 @@ var Subreddits = []string{
 	"selfhosted",
 	"Shopify",
 	"smallbusiness",
+	"freelance_forhire",
 }
