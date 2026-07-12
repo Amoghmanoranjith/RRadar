@@ -3,6 +3,7 @@ package service
 import (
 	"fmt"
 	"io"
+	"log/slog"
 	"rradar/http"
 )
 
@@ -14,7 +15,13 @@ func Scrape(
 	fmt.Println("Fetching:", url)
 	resp, err := http.Client.Get(url)
 	if err != nil {
-		fmt.Println("Scrape failed:", err)
+		slog.Error(
+			"failed to scrape",
+			"subreddit", subreddit,
+			"operation", "Scrape",
+			"cause", "http.Client.Get",
+			"error", err,
+		)
 		return []byte{}
 	}
 
@@ -23,7 +30,13 @@ func Scrape(
 	body, err := io.ReadAll(resp.Body)
 	resp.Body.Close()	
 	if err != nil {
-		fmt.Println("Read failed:", err)
+		slog.Error(
+			"failed to read data",
+			"subreddit", subreddit,
+			"operation", "Scrape",
+			"cause", "io.ReadAll",
+			"error", err,
+		)		
 		return []byte{}
 	}
 
